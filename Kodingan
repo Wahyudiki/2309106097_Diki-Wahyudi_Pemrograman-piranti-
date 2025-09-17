@@ -1,0 +1,265 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Profil Diri',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.indigo,
+        fontFamily: 'Roboto',
+      ),
+      home: const ProfilePage(),
+    );
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Data profil Diki Wahyudi
+    final fullName = 'Diki Wahyudi';
+    final dob = DateTime(2004, 6, 10); // ganti sesuai tgl lahir
+    final phone = '+628012394898';
+    final email = 'diki.wahyudi@gmail.com';
+    final address = 'Jl. juanda';
+    final gender = 'Laki-laki';
+    final occupation = 'Mahasiswa';
+    final bio =
+        'Saya merupakan siswa dari prodi informatika,saya hobi bermain musik, dan futsal.\n'
+        'jangan terlalu memaksakan hal yang sulit bagimu.';
+
+    // Hitung umur otomatis
+    int calculateAge(DateTime dob) {
+      final now = DateTime.now();
+      int years = now.year - dob.year;
+      if (now.month < dob.month ||
+          (now.month == dob.month && now.day < dob.day)) {
+        years--;
+      }
+      return years;
+    }
+
+    String formattedDob(DateTime d) =>
+        '${d.day.toString().padLeft(2, '0')}-'
+        '${d.month.toString().padLeft(2, '0')}-'
+        '${d.year}';
+
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // HEADER dengan gradasi
+            Container(
+              height: 260,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.indigo, Colors.blueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(40),
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircleAvatar(
+                    radius: 60,
+                    backgroundImage: NetworkImage(
+                      "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", // foto random online
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    fullName,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    occupation,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // BIO CARD
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Tentang Saya',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        bio,
+                        style: const TextStyle(fontSize: 14, height: 1.4),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // INFO CARD
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      InfoRow(
+                          icon: Icons.cake,
+                          label: 'Tanggal Lahir',
+                          value: formattedDob(dob)),
+                      InfoRow(
+                          icon: Icons.hourglass_bottom,
+                          label: 'Umur',
+                          value: '${calculateAge(dob)} tahun'),
+                      InfoRow(
+                          icon: Icons.phone, label: 'Nomor Telepon', value: phone),
+                      InfoRow(icon: Icons.email, label: 'Email', value: email),
+                      InfoRow(
+                          icon: Icons.location_on,
+                          label: 'Alamat',
+                          value: address),
+                      InfoRow(
+                          icon: Icons.person, label: 'Jenis Kelamin', value: gender),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // SOCIAL BUTTONS
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SocialButton(
+                  icon: Icons.facebook,
+                  color: Colors.blue,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Buka Facebook...")),
+                    );
+                  },
+                ),
+                SocialButton(
+                  icon: Icons.alternate_email,
+                  color: Colors.red,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Buka Email...")),
+                    );
+                  },
+                ),
+                SocialButton(
+                  icon: Icons.link,
+                  color: Colors.green,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Buka Website...")),
+                    );
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Widget untuk info baris
+class InfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  const InfoRow({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.indigo),
+          const SizedBox(width: 10),
+          SizedBox(
+              width: 120,
+              child: Text(label,
+                  style: const TextStyle(fontWeight: FontWeight.w600))),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
+  }
+}
+
+// Widget tombol sosial
+class SocialButton extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  const SocialButton({
+    super.key,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(icon, color: color, size: 32),
+      onPressed: onTap,
+    );
+  }
+}
